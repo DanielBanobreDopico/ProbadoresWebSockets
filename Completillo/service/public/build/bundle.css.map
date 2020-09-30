@@ -1,0 +1,12 @@
+{
+  "version": 3,
+  "file": "bundle.css",
+  "sources": [
+    "App.svelte"
+  ],
+  "sourcesContent": [
+    "<script>\n\n    var chatMessages = [];\n    var msg = '';\n    var ownId = '';\n\n    const url = 'ws://192.168.5.240:3000/'\n    const connection = new WebSocket(url)\n    connection.onopen = () => {\n        console.log('*** Conectado ***')\n    }\n\n    function send(txt){\n        connection.send(txt)\n    }\n\n    connection.onmessage = msg => {\n        if (! ownId) {\n            ownId = msg.data;\n            console.log(`My ID: ${ownId}`);\n        } else {\n            var msgJSON = msg.data;\n            var message = JSON.parse(msgJSON);\n            console.log(message)\n            chatMessages = [...chatMessages, message];\n        }\n    }\n</script>\n\n<main>\n    <div>\n        {#each chatMessages as msg}\n        {#if msg.from == ownId}\n        <div class=\"me\">\n            <img src=\"https://api.adorable.io/avatars/50/{msg.from}.png\">\n            <p>{msg.content}</p>\n        </div>\n        {:else}\n        <div class=\"others\">\n            <img alt=\"avatar\" src=\"https://api.adorable.io/avatars/50/{msg.from}.png\">\n            <p>{msg.content}</p>\n        </div>\n        {/if}\n\n        {/each}\n    </div>\n    <div id=\"input\">\n        <input type=\"text\" bind:value={msg}>\n        <button on:click={send(msg)}>Send</button>\n    </div>\n</main>\n\n<style>\n    div.me {\n        background-color: darkgray;\n        text-align: right;\n    }\n    div.others {\n        background-color:peru;\n    }\n    div#input {\n        position: fixed;\n        bottom: 0px;\n    }\n</style>"
+  ],
+  "names": [],
+  "mappings": "AAqDI,GAAG,GAAG,cAAC,CAAC,AACJ,gBAAgB,CAAE,QAAQ,CAC1B,UAAU,CAAE,KAAK,AACrB,CAAC,AACD,GAAG,OAAO,cAAC,CAAC,AACR,iBAAiB,IAAI,AACzB,CAAC,AACD,GAAG,MAAM,cAAC,CAAC,AACP,QAAQ,CAAE,KAAK,CACf,MAAM,CAAE,GAAG,AACf,CAAC"
+}
